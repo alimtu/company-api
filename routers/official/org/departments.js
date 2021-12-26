@@ -20,7 +20,7 @@ router.get("/departmentMembers", auth, async (req, res) => {
   const { MemberID } = req.user;
 
   let result = await selectQuery(
-    `EXEC OrgAPI.GetAllDepartmentEmployees ${MemberID}, ${req.query.departmentID}`
+    `EXEC OrgAPI.GetEmployeesByDepartmentID ${MemberID}, ${req.query.departmentID}`
   );
 
   result = result.recordset;
