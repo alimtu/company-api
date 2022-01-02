@@ -6,21 +6,8 @@ const { selectQuery } = require("../../../startup/db");
 router.get("/", auth, async (req, res) => {
   const { MemberID } = req.user;
 
-  let result = await selectQuery(`EXEC OrgAPI.GetAllDepartments ${MemberID}`);
-
-  result = result.recordset;
-
-  if (result.length === 1 && result[0].Error)
-    return res.status(400).send(result[0]);
-
-  res.send(result);
-});
-
-router.get("/departmentMembers", auth, async (req, res) => {
-  const { MemberID } = req.user;
-
   let result = await selectQuery(
-    `EXEC OrgAPI.GetEmployeesByDepartmentID ${MemberID}, ${req.query.departmentID}`
+    `EXEC TimexAPI.GetAllSecurityGuards ${MemberID}`
   );
 
   result = result.recordset;
@@ -35,13 +22,16 @@ router.get("/params", auth, async (req, res) => {
   const { MemberID } = req.user;
 
   let result = await selectQuery(
-    `EXEC OrgAPI.GetDepartmentsParams ${MemberID}`
+    `EXEC TimexAPI.GetSecurityGuardsParams ${MemberID}`
   );
 
-  result = result.recordset;
+  result = result.recordset[0];
 
-  if (result.length === 1 && result[0].Error)
-    return res.status(400).send(result[0]);
+  if (result.Error) return res.status(400).send(result);
+
+  for (const key in result) {
+    result[key] = JSON.parse(result[key]);
+  }
 
   res.send(result);
 });
@@ -51,22 +41,19 @@ router.post("/search", auth, async (req, res) => {
   const { MemberID } = req.user;
 
   let result = await selectQuery(
-    `EXEC OrgAPI.SearchDepartments ${MemberID}, N'${searchText}'`
+    `EXEC TimexAPI.SearchSecurityGuards ${MemberID}, N'${searchText}'`
   );
 
-  result = result.recordset;
-
-  if (result.length === 1 && result[0].Error)
-    return res.status(400).send(result[0]);
-
-  res.send(result);
+  res.send(result.recordset);
 });
 
 router.post("/", auth, async (req, res) => {
   const { MemberID } = req.user;
 
   let result = await selectQuery(
-    `EXEC OrgAPI.SaveDepartment ${MemberID}, N'${JSON.stringify(req.body)}'`
+    `EXEC TimexAPI.SaveSecurityGuard ${MemberID}, N'${JSON.stringify(
+      req.body
+    )}'`
   );
 
   result = result.recordset[0];
@@ -80,7 +67,7 @@ router.delete("/:recordID", auth, async (req, res) => {
   const { MemberID } = req.user;
 
   let result = await selectQuery(
-    `EXEC OrgAPI.DeleteDepartment ${MemberID}, ${req.params.recordID}`
+    `EXEC TimexAPI.DeleteSecurityGuard ${MemberID}, ${req.params.recordID}`
   );
 
   result = result.recordset[0];

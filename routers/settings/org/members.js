@@ -18,21 +18,6 @@ router.get("/", auth, async (req, res) => {
   res.send(result);
 });
 
-router.get("/getPicFileName", auth, async (req, res) => {
-  const { MemberID } = req.user;
-
-  let result = await selectQuery(
-    `EXEC OrgAPI.GetMemberPicFileName ${MemberID} , ${MemberID}`
-  );
-
-  result = result.recordset[0].PicFileName;
-
-  if (result.length === 1 && result[0].Error)
-    return res.status(400).send(result[0]);
-
-  res.send(result);
-});
-
 router.get("/params", auth, async (req, res) => {
   const { MemberID } = req.user;
 
