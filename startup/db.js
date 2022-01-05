@@ -11,7 +11,7 @@ const config = {
   requestTimeout: 30000,
   //------------------------------------------
   database: "CompanyDB",
-  server: "LEGION5",
+  server: ".",
   options: {
     trustedConnection: true,
   },
